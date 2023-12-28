@@ -32,7 +32,7 @@ const Navbar = () => {
           </p>
         </Link>
         <ul
-          className="list-name hidden sm:flex
+          className="list-none hidden sm:flex
       flex-row gap-10"
         >
           {navLinks.map((link) => (
@@ -41,8 +41,8 @@ const Navbar = () => {
               className={`${
                 active === link.title ? "text-white" : "text-secondary"
               }
-        hover: text-white text-[18px]
-        front-medium cursor-pointer`}
+        hover:text-white text-[18px]
+        font-medium cursor-pointer`}
               onClick={() => setActive(link.title)}
             >
               <a href={`#${link.id}`}> {link.title}</a>
@@ -57,13 +57,13 @@ const Navbar = () => {
             src={toggle ? close : menu}
             alt="menu"
             className="w-[28px]
-      h-[28px] object-contain cursor-pointer"
+      h-[28px] object-contain  "
             onClick={() => setToggle(!toggle)}
           />
           <div
             className={`${
               !toggle ? "hidden" : "flex"
-            } p-6 black-gradient abdolute
+            } p-6 black-gradient absolute
           top-20 right-0 mx-4 my-2 min-w-[140px]
           z-10 rounded-xl`}
           >
