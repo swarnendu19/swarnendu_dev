@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import authService from './appwrite/auth';
 import { login, logout } from './store/authSlice';
-import {Header ,Footer} from './component'
+import { Header, Footer } from './component';
 import './App.css';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
       <div className='w-full block'>
       <Header/> 
       <main>
-
+           Todo
       </main>
       <Footer/> 
       </div>

@@ -1,5 +1,5 @@
 import conf from '../conf/conf'
-import {Client, Databases, ID, Query, } from 'appwrite'
+import {Client, Databases,Storage, ID, Query, } from 'appwrite'
 
 export class Service{
     client = new Client();
@@ -127,9 +127,6 @@ export class Service{
             fileId
         )
     }
-
-
-
 }
 
 const service = new Service()
