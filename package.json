@@ -6,6 +6,7 @@
     "start": "next dev",
     "dev": "PORT=3434 cross-env INIT_CWD=$PWD next dev",
     "build": "cross-env INIT_CWD=$PWD prisma generate && next build && npm run postbuild",
+    "build:win": "cross-env INIT_CWD=$PWD prisma generate && next build --no-lint && npm run postbuild",
     "postbuild": "cross-env NODE_OPTIONS='--experimental-json-modules' tsx ./scripts/post-build.ts",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
