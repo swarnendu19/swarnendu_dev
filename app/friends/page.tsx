@@ -3,6 +3,7 @@ import { PageHeader } from '~/components/ui/page-header'
 import { Container } from '~/components/ui/container'
 import { FriendsList } from './friends-list'
 import friends from '~/json/friends.json' assert { type: 'json' }
+import type { Friend } from '~/types/friends'
 
 // const MAX_POSTS_DISPLAY = 5
 // const MAX_SNIPPETS_DISPLAY = 6
@@ -10,8 +11,8 @@ import friends from '~/json/friends.json' assert { type: 'json' }
 export const metadata = genPageMetadata({ title: 'My friends and tech bloggers' })
 
 export default async function HomePage() {
-  const friendsList = friends.filter((f) => f.type === 'friend')
-  const bloggersList = friends.filter((f) => f.type === 'techStar')
+  const friendsList = (friends as Friend[]).filter((f) => f.type === 'friend')
+  const bloggersList = (friends as Friend[]).filter((f) => f.type === 'techStar')
   return (
     // <Home
     //   posts={allCoreContent(sortPosts(allBlogs)).slice(0, MAX_POSTS_DISPLAY)}

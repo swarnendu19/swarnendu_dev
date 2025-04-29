@@ -5,10 +5,10 @@ import { GrowingUnderline } from '~/components/ui/growing-underline'
 import { Image, Zoom } from '~/components/ui/image'
 import { Link } from '~/components/ui/link'
 import { TiltedGridBackground } from '~/components/ui/tilted-grid-background'
-import type { ImdbFriends } from '~/types/data'
+import type { Friend } from '~/types/friends'
 
-export function FriendCard({ friend }: { friend: ImdbFriends }) {
-  const { name, slogan, imgSrc, url } = friend
+export function FriendCard({ friend }: { friend: Friend }) {
+  const { name, description, avatar, url } = friend
 
   return (
     <GradientBorder className="rounded-xl shadow-sm dark:bg-white/5">
@@ -16,12 +16,12 @@ export function FriendCard({ friend }: { friend: ImdbFriends }) {
       <div className="flex gap-5 md:gap-5">
         <div className="m-4 flex shrink-0 items-end">
           <Zoom
-            zoomImg={{ src: imgSrc, alt: name }}
-            canSwipeToUnzoom={false} // Not working
+            zoomImg={{ src: avatar || '/static/images/avatar.png', alt: name }}
+            canSwipeToUnzoom={false}
             zoomMargin={20}
           >
             <Image
-              src={imgSrc}
+              src={avatar || '/static/images/avatar.png'}
               alt={name}
               width={300}
               height={450}
@@ -37,11 +37,11 @@ export function FriendCard({ friend }: { friend: ImdbFriends }) {
           </div>
           <div className="grow">
             <div className="flex flex-wrap items-center gap-1 text-gray-500 dark:text-gray-400">
-              <span>{slogan}</span>
+              <span>{description}</span>
             </div>
           </div>
-          <Link href={url} className="" aria-label="All posts">
-            <GrowingUnderline data-umami-event="all-posts">
+          <Link href={url} className="" aria-label="Visit website">
+            <GrowingUnderline data-umami-event="visit-website">
               <span className="hidden md:inline-block">Visit</span>
               <span className="md:hidden">More</span> &rarr;
             </GrowingUnderline>
