@@ -1,0 +1,203 @@
+---
+title: 'Developing an MCP Server from Scratch: A Case Study with "asset-price-mcp"'
+date: '2025-04-04'
+tags: ['AI', 'MCP', 'LLM']
+draft: false
+summary: 'Building your first MCP server from scratch, including core functionality implementation, API integration, and data processing workflow...'
+images: ['/static/images/blog/202504/The_First_MCP_Server/Beihai_Park.webp']
+authors: ['default']
+---
+
+## Introduction
+
+For an introduction to MCP, you can refer to the previous article "[Model Context Protocol (MCP) Quick Start](https://www.swarnendu.me/blog/202503/MCP_Quick_Start)".
+
+Today, we'll develop an MCP Server from scratch, implementing an asset price query MCP Server.
+
+---
+
+## Implementation Steps
+
+### 1. Setting up MCP Server
+
+First, use the `@modelcontextprotocol/sdk` provided `McpServer` class to create an MCP Server instance:
+
+```javascript
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+
+const server = new McpServer({
+  name: 'asset-price',
+  version: '1.0.0',
+})
+```
+
+Here, we'll name the server "asset-price" and set the version to "1.0.0".
+
+### 2. Defining Data Structure
+
+Use the `zod` library to define the data structure for asset symbols and asset prices to ensure that the data received from the API is in the expected format:
+
+```javascript
+import { z } from 'zod'
+
+const AssetSymbolSchema = z.object({
+  name: z.string(),
+  symbol: z.string(),
+})
+
+const AssetPriceSchema = z.object({
+  name: z.string(),
+  price: z.number(),
+  symbol: z.string(),
+  updatedAt: z.string(),
+  updatedAtReadable: z.string(),
+})
+```
+
+These schemas are used to validate the structure and type of data received from external APIs.
+
+### 3. Implementing Cache Mechanism
+
+To improve performance and reduce the number of requests to external APIs, we'll implement a simple in-memory cache:
+
+```javascript
+class SimpleCache {
+  private cache: Map<string, CacheEntry<any>> = new Map();
+
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    if (Date.now() - entry.timestamp > CACHE_TTL) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.data as T;
+  }
+
+  set<T>(key: string, data: T): void {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now()
+    });
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+const apiCache = new SimpleCache();
+```
+
+This cache will automatically clear expired data after a set time interval.
+
+### 4. Fetching Asset Symbols and Price Data
+
+Define a generic function `fetchApiData` to fetch data from external APIs and validate it:
+
+```javascript
+async function fetchApiData<T>(url: string, schema: z.ZodSchema<T>, useCache = true): Promise<T | null> {
+  if (useCache) {
+    const cachedData = apiCache.get<T>(url);
+    if (cachedData) {
+      return cachedData;
+    }
+  }
+
+  const headers = {
+    "User-Agent": USER_AGENT,
+    "Accept": "application/json",
+  };
+
+  try {
+    const response = await fetchWithTimeout(url, { headers });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}, url: ${url}`);
+    }
+
+    const data = await response.json();
+    const parsedData = schema.parse(data);
+
+    if (useCache && parsedData) {
+      apiCache.set(url, parsedData);
+    }
+
+    return parsedData;
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      console.error(`Schema validation failed for ${url}:`, error.errors);
+    } else if (error.name === 'AbortError') {
+      console.error(`Request timeout for ${url}`);
+    } else {
+      console.error(`API request failed for ${url}:`, error);
+    }
+    return null;
+  }
+}
+```
+
+This function first checks the cache, and if the cache doesn't contain data, it fetches data from the API, and uses the `zod` schema to validate it.
+
+### 5. Defining MCP Tools
+
+Register a tool `get_asset_price` on the MCP Server to retrieve current asset price information:
+
+```javascript
+server.tool(
+  "get_asset_price",
+  "Retrieves current pricing information for various assets including precious metals and cryptocurrencies",
+  {
+    random_string: z.string().optional().describe("Dummy parameter for no-parameter tools")
+  },
+  async () => {
+    try {
+      const symbols = await fetchApiData(
+        `${GOLD_API_BASE}/symbols`,
+        z.array(AssetSymbolSchema)
+      );
+
+      if (!symbols?.length) {
+        return {
+          content: [{
+            type: "text",
+            text: "No available asset symbols found. Service might be temporarily unavailable.",
+          }]
+        };
+      }
+
+      const prices: AssetPrice[] = [];
+      for (const { symbol } of symbols) {
+        const priceData = await fetchApiData(`${GOLD_API_BASE}/price/${symbol}`, AssetPriceSchema);
+        if (priceData) {
+          prices.push(priceData);
+        }
+      }
+
+      return {
+        content: [{
+          type: "text",
+          text: prices.map(price => `${price.name}: ${price.price}`).join("\n"),
+        }]
+      };
+    } catch (error) {
+      console.error("Tool execution failed:", error);
+      return {
+        content: [{
+          type: "text",
+          text: "An error occurred while processing your request. Please try again later.",
+        }]
+      };
+    }
+  }
+);
+```
+
+This tool allows LLM to request asset price data from the MCP Server and return the result in text format.
+
+## Link
+
+- Source Code: [https://github.com/mk965/asset-price-mcp](https://github.com/mk965/asset-price-mcp)
+- npm: [https://www.npmjs.com/package/asset-price-mcp](https://www.npmjs.com/package/asset-price-mcp)
