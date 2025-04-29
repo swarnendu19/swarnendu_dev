@@ -41,9 +41,9 @@ You can see what the blog looks like here: <https://swarnendu.com>(Dummy)
 
 2. Update the information in the files in the `/data` directory, which contains the blog data.
 
-### 3. Deploy to Vercel
+<!-- ### 3. Deploy to Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmk965%2Fswarnendu.me&env=NEXT_PUBLIC_GISCUS_REPO,NEXT_PUBLIC_GISCUS_REPOSITORY_ID,NEXT_PUBLIC_GISCUS_CATEGORY,NEXT_PUBLIC_GISCUS_CATEGORY_ID,NEXT_UMAMI_ID,SPOTIFY_CLIENT_ID,SPOTIFY_CLIENT_SECRET,SPOTIFY_REFRESH_TOKEN,DATABASE_URL,GITHUB_API_TOKEN&envDescription=Giscus%5CUmami%5CSpotify%5CData%5CGithub&envLink=https%3A%2F%2Fgithub.com%2Fmk965%2Fswarnendu.me%2Fblob%2Fmain%2F.env.example&project-name=swarnendu-me-blog&repository-name=swarnendu-me-blog&demo-title=swarnendu.me&demo-description=swarnendu's%20blog%20-%20swarnendu's%20coding%20journey&demo-url=https%3A%2F%2Fwww.swarnendu.me%2F&demo-image=https%3A%2F%2Fwww.swarnendu.me%2Fstatic%2Fimages%2Fhome_page.webp)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmk965%2Fswarnendu.me&env=NEXT_PUBLIC_GISCUS_REPO,NEXT_PUBLIC_GISCUS_REPOSITORY_ID,NEXT_PUBLIC_GISCUS_CATEGORY,NEXT_PUBLIC_GISCUS_CATEGORY_ID,NEXT_UMAMI_ID,SPOTIFY_CLIENT_ID,SPOTIFY_CLIENT_SECRET,SPOTIFY_REFRESH_TOKEN,DATABASE_URL,GITHUB_API_TOKEN&envDescription=Giscus%5CUmami%5CSpotify%5CData%5CGithub&envLink=https%3A%2F%2Fgithub.com%2Fmk965%2Fswarnendu.me%2Fblob%2Fmain%2F.env.example&project-name=swarnendu-me-blog&repository-name=swarnendu-me-blog&demo-title=swarnendu.me&demo-description=swarnendu's%20blog%20-%20swarnendu's%20coding%20journey&demo-url=https%3A%2F%2Fwww.swarnendu.me%2F&demo-image=https%3A%2F%2Fwww.swarnendu.me%2Fstatic%2Fimages%2Fhome_page.webp) -->
 
 ### 4. Blog post visits can also be stored in Vercel for free
 
