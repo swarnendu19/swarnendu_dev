@@ -16,6 +16,9 @@ export default function NotFound() {
               <Twemoji emoji={'face-with-monocle'} />
             </p>
             <p className="mb-8">
+              Oops! Looks like you&apos;ve stumbled upon a page that doesn&apos;t exist.
+            </p>
+            <p className="mb-8">
               But don&apos;t worry, you can find plenty of other things on my homepage.
             </p>
             <Link href="/">

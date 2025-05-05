@@ -2,7 +2,7 @@ import { NewsletterAPI } from 'pliny/newsletter'
 import { SITE_METADATA } from '~/data/site-metadata'
 
 const handler = NewsletterAPI({
-  // @ts-ignore
+  // @ts-expect-error
   provider: SITE_METADATA.newsletter.provider,
 })
 

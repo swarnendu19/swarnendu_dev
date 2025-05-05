@@ -1,8 +1,10 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   "rules": {
     "react/no-unescaped-entities": "off",
     "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/ban-ts-comment": ["error", { "prefer-expect-error": true }],
     "prefer-const": "error"
   }
 }
