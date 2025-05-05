@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import type { ComponentPropsWithoutRef, ElementType } from 'react'
 
 export function Button({
   children,
@@ -7,10 +8,9 @@ export function Button({
   ...rest
 }: {
   children: React.ReactNode
-  as?: React.ElementType
+  as?: ElementType
   className?: string
-  [key: string]: any
-}) {
+} & ComponentPropsWithoutRef<'button'>) {
   return (
     <Component
       className={clsx([

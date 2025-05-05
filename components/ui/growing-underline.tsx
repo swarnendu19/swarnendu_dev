@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ComponentPropsWithoutRef, ElementType } from 'react'
 
 export function GrowingUnderline({
   as: Component = 'span',
@@ -10,12 +10,11 @@ export function GrowingUnderline({
   ...rest
 }: {
   children: React.ReactNode
-  as?: React.ElementType
+  as?: ElementType
   active?: boolean
   className?: string
   duration?: number
-  [key: string]: any
-}) {
+} & ComponentPropsWithoutRef<'span'>) {
   return (
     <Component
       className={clsx([

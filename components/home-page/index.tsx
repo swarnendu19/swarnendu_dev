@@ -30,7 +30,7 @@ export function Home({
               <p>I started learning to code in 2022 and have been hooked ever since.</p>
               <p>I landed my first internship as a Web developer in 2024.</p>
               <p>I have a passion for JS/TS, web dev.</p>
-              <p>I started this blog to document and share my knowledge & experience.</p>
+              <p>I started this blog to document and share my knowledge &amp; experience.</p>
             </div>
             <BlogLinks />
             <p className="my-6 flex md:my-8">
