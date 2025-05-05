@@ -42,9 +42,9 @@ export function TypedBios() {
     >
       <ul id="bios" className="hidden">
         {/* <li>
-          I'm aliased as <span className="font-medium"></span> at work.
+          I&apos;m aliased as <span className="font-medium"></span> at work.
         </li> */}
-        <li>I'm a learner, builder, and freedom seeker.</li>
+        <li>I&apos;m a learner, builder, and freedom seeker.</li>
         <li>
           I live in <b className="font-medium">Kolkata, India</b>.
         </li>
@@ -58,12 +58,12 @@ export function TypedBios() {
         <li>I work mostly with JS/TS technologies.</li>
         <li>I was topper in my school.</li>
         <li>
-          I'm a dog-person. <Twemoji emoji="dog" />
+          I&apos;m a dog-person. <Twemoji emoji="dog" />
         </li>
         <li>
-          I'm a sport-guy. I love
+          I&apos;m a sport-guy. I love
           <span className="ml-1">
-           🏏,
+            🏏,
             <Twemoji emoji="chess-pawn" />,
             <Twemoji emoji="soccer-ball" />
           </span>
