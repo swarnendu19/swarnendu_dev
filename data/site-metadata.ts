@@ -6,8 +6,8 @@ export const SITE_METADATA = {
     'A personal space on the cloud where I document my programming journey, sharing lessons, insights, and resources for fellow developers.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://www.swarnendu.me',
-  siteRepo: 'https://github.com/swarnendu19/swarnendu.me',
+  siteUrl: 'https://www.swarnendu.dev',
+  siteRepo: 'https://github.com/swarnendu19/swarnendu_dev',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/profile.webp`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.jpeg`,
 
@@ -16,7 +16,7 @@ export const SITE_METADATA = {
   analytics: {
     umamiAnalytics: {
       websiteId: process.env.NEXT_UMAMI_ID,
-      shareUrl: 'https://analytics.eu.umami.is/share/EqvpZYPABxaQA3mr/swarnendu.me',
+      shareUrl: 'https://analytics.eu.umami.is/share/EqvpZYPABxaQA3mr/swarnendu.dev',
     },
   },
   newsletter: {

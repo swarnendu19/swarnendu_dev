@@ -1,7 +1,6 @@
 import type { Project } from '~/types/data'
 
 export const PROJECTS: Project[] = [
-   
   {
     type: 'self',
     title: 'PaySync-npm Package',
@@ -11,5 +10,4 @@ export const PROJECTS: Project[] = [
     // demo: <AvpDemo />,
     builtWith: ['Typescript'],
   },
-   
 ]

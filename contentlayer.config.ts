@@ -4,6 +4,7 @@ import { writeFileSync } from 'fs'
 import { slug } from 'github-slugger'
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import readingTime from 'reading-time'
 // Remark packages
 import {
@@ -25,7 +26,10 @@ import rehypePrismPlus from 'rehype-prism-plus'
 import { SITE_METADATA } from './data/site-metadata'
 import { extractTocHeadings } from './server/emark-toc-headings.server'
 
-const root = process.cwd()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const root = path.resolve(__dirname)
+// Handle Windows paths properly
+const rootUrl = `file:///${root.replace(/\\/g, '/').replace(/^([A-Za-z]):/, '/$1:')}`
 const isProduction = process.env.NODE_ENV === 'production'
 
 // heroicon mini link
@@ -66,7 +70,7 @@ function createTagCount(documents) {
       })
     }
   })
-  writeFileSync('./json/tag-data.json', JSON.stringify(tagCount))
+  writeFileSync(path.join(root, 'json', 'tag-data.json'), JSON.stringify(tagCount))
 }
 
 function createSearchIndex(allBlogs) {
@@ -75,7 +79,7 @@ function createSearchIndex(allBlogs) {
     SITE_METADATA.search.kbarConfig.searchDocumentsPath
   ) {
     writeFileSync(
-      `public/${path.basename(SITE_METADATA.search.kbarConfig.searchDocumentsPath)}`,
+      path.join(root, 'public', path.basename(SITE_METADATA.search.kbarConfig.searchDocumentsPath)),
       JSON.stringify(allCoreContent(sortPosts(allBlogs)))
     )
     console.log('Local search index generated...')
@@ -172,40 +176,51 @@ export const Author = defineDocumentType(() => ({
   computedFields,
 }))
 
+const remarkPlugins = [
+  remarkExtractFrontmatter,
+  remarkGfm,
+  remarkCodeTitles,
+  remarkMath,
+  remarkImgToJsx,
+  remarkAlert,
+]
+
+const rehypePlugins = [
+  rehypeSlug,
+  [
+    rehypeAutolinkHeadings,
+    {
+      behavior: 'prepend',
+      headingProperties: {
+        className: ['content-header'],
+      },
+      content: icon,
+    },
+  ],
+  rehypeKatex,
+  rehypeCitation,
+  rehypePresetMinify,
+  [
+    rehypePrismPlus,
+    {
+      defaultLanguage: 'js',
+      ignoreMissing: true,
+    },
+  ],
+]
+
 export default makeSource({
   contentDirPath: 'data',
+  contentDirInclude: ['**/*.md', '**/*.mdx'],
+  contentDirExclude: ['**/drafts/**'],
   documentTypes: [Blog, Snippet, Author],
   mdx: {
-    cwd: process.cwd(),
-    remarkPlugins: [
-      remarkExtractFrontmatter,
-      remarkGfm,
-      remarkCodeTitles,
-      remarkMath,
-      remarkImgToJsx,
-      remarkAlert,
-    ],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'prepend',
-          headingProperties: {
-            className: ['content-header'],
-          },
-          content: icon,
-        },
-      ],
-      rehypeKatex,
-      [rehypeCitation, { path: path.join(root, 'data') }],
-      [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
-      rehypePresetMinify,
-    ],
+    remarkPlugins,
+    rehypePlugins,
   },
   onSuccess: async (importData) => {
-    const { allBlogs, allSnippets } = await importData()
-    createTagCount([...allBlogs, ...allSnippets])
+    const { allBlogs } = await importData()
+    createTagCount(allBlogs)
     createSearchIndex(allBlogs)
   },
 })
