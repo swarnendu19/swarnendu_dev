@@ -1,0 +1,137 @@
+---
+title: Demystifying JavaScript Proxies 🧙‍♂️
+description: Learn how JavaScript Proxy objects let you intercept and customize fundamental operations like property access, assignment, and more.
+date: 2025-06-23
+tags: ["javascript", "proxy", "meta-programming"]
+image: "./assets/proxy-javascript/Javascript-Proxy.png"
+imageDark: "./assets/proxy-javascript/Javascript-Proxy.png"
+published: true
+author: Swarnendu
+---
+
+<Callout>
+  If you enjoy this post, consider checking out the [demo
+  repo](https://github.com/swarnendu19/js-proxy-demo) and give it a ⭐.
+</Callout>
+
+# Why Proxy?
+
+JavaScript’s `Proxy` object allows you to define custom behavior for fundamental operations (e.g. property lookup, assignment, enumeration, function invocation). Think of it as a layer that wraps an object and _intercepts_ operations on it.
+
+For example, imagine logging every time someone accesses a property of an object.
+
+```js
+const user = {
+  name: "Swarnendu",
+  age: 22,
+};
+
+const handler = {
+  get(target, prop) {
+    console.log(`Accessed property "${prop}"`);
+    return target[prop];
+  },
+};
+
+const proxyUser = new Proxy(user, handler);
+
+console.log(proxyUser.name); // Logs: Accessed property "name" => Swarnendu
+```
+
+# Use Cases
+
+## 1. Validation
+
+You can validate property values before assigning them.
+
+```js
+const person = {
+  age: 0,
+};
+
+const validator = {
+  set(obj, prop, value) {
+    if (prop === "age" && typeof value !== "number") {
+      throw new TypeError("Age must be a number");
+    }
+    obj[prop] = value;
+    return true;
+  },
+};
+
+const proxyPerson = new Proxy(person, validator);
+
+proxyPerson.age = 25; // OK
+proxyPerson.age = "twenty five"; // ❌ Throws TypeError
+```
+
+## 2. Auto-fill Defaults
+
+Provide default values for missing properties:
+
+```js
+const defaultHandler = {
+  get: (target, prop) => (prop in target ? target[prop] : "N/A"),
+};
+
+const userInfo = new Proxy({}, defaultHandler);
+
+console.log(userInfo.name); // N/A
+console.log(userInfo.email); // N/A
+```
+
+## 3. Revocable Access
+
+You can revoke access to a proxy using `Proxy.revocable`:
+
+```js
+const target = { secret: 42 };
+
+const { proxy, revoke } = Proxy.revocable(target, {
+  get: (t, prop) => t[prop],
+});
+
+console.log(proxy.secret); // 42
+revoke();
+console.log(proxy.secret); // ❌ TypeError: Cannot perform 'get' on a proxy that has been revoked
+```
+
+## 4. Observable Objects
+
+Make your object reactive (like Vue.js or MobX):
+
+```js
+function makeObservable(target) {
+  const listeners = [];
+
+  const proxy = new Proxy(target, {
+    set(obj, prop, value) {
+      obj[prop] = value;
+      listeners.forEach((listener) => listener(prop, value));
+      return true;
+    },
+  });
+
+  proxy.observe = function (listener) {
+    listeners.push(listener);
+  };
+
+  return proxy;
+}
+
+const settings = makeObservable({ darkMode: false });
+settings.observe((prop, val) => {
+  console.log(`Property "${prop}" changed to ${val}`);
+});
+
+settings.darkMode = true;
+// Logs: Property "darkMode" changed to true
+```
+
+# Conclusion
+
+JavaScript Proxies are a powerful meta-programming tool. They allow you to write more expressive and customizable code by hijacking default object behaviors.
+
+Whether you're building validation logic, access control, reactivity systems, or simply debugging, proxies offer elegant solutions.
+
+Happy coding! 🚀

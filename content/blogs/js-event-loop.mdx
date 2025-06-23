@@ -1,0 +1,133 @@
+---
+title: Understanding the JavaScript Event Loop 🔁
+description: A deep dive into how JavaScript’s single-threaded runtime handles asynchronous operations using the event loop, call stack, task queues, and more.
+date: 2025-06-23
+tags: ["javascript", "event-loop", "asynchronous"]
+image: "./assets/js-event-loop/loop.jpg"
+imageDark: "./assets/js-event-loop/loop.jpg"
+published: true
+author: Swarnendu
+---
+
+<Callout>
+  Explore the [interactive
+  demo](https://github.com/swarnendu19/js-event-loop-demo) to visualize how the
+  event loop works in real-time. ⭐ the repo if you find it useful!
+</Callout>
+
+# Introduction
+
+JavaScript is single-threaded, meaning it executes one piece of code at a time. Yet, it handles asynchronous tasks like network requests, timers, and DOM events seamlessly. The secret sauce? The **Event Loop**.
+
+# Core Components
+
+1. **Call Stack**: A LIFO stack of function frames being executed.
+2. **Web APIs (or Host APIs)**: Browser or Node.js-provided APIs (e.g., `setTimeout`, DOM events, `fetch`).
+3. **Task Queues**:
+   - **Macrotask Queue**: e.g., `setTimeout`, `setInterval`, I/O tasks
+   - **Microtask Queue**: e.g., `Promise` callbacks (`.then`, `catch`, `finally`), `MutationObserver`
+4. **Event Loop**: Continuously checks the call stack and task queues to determine what to execute next.
+
+# How It Works
+
+1. **Execute Script**: Synchronous code runs, pushing and popping frames on the call stack.
+2. **Register Async Tasks**: When encountering an async API (e.g., `setTimeout`), it’s handed off to Web APIs.
+3. **Queue Callbacks**: Upon completion, callbacks are queued:
+   - **Microtasks** are queued first (higher priority).
+   - **Macrotasks** are queued next.
+4. **Drain Microtasks**: After each task completes and the call stack is empty, the event loop drains **all** microtasks before processing the next macrotask.
+5. **Process Next Macrotask**: The loop picks the next macrotask and repeats.
+
+# Code Examples
+
+## Example 1: setTimeout vs Promise
+
+```js
+console.log("Start");
+
+setTimeout(() => {
+  console.log("Timeout callback");
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("Promise callback");
+});
+
+console.log("End");
+```
+
+**Expected Output**:
+
+```
+Start
+End
+Promise callback
+Timeout callback
+```
+
+**Why?** Promises (microtasks) run before `setTimeout` (macrotasks), even with a 0ms delay.
+
+## Example 2: Nested Tasks
+
+```js
+console.log("A");
+
+setTimeout(() => {
+  console.log("B");
+  Promise.resolve().then(() => {
+    console.log("C");
+  });
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log("D");
+  setTimeout(() => {
+    console.log("E");
+  }, 0);
+});
+
+console.log("F");
+```
+
+**Output**:
+
+```
+A
+F
+D
+B
+C
+E
+```
+
+# Visualizing the Loop
+
+<div align="center">
+  <img
+    src="./assets/js-event-loop/loop.jpg"
+    alt="Event Loop Diagram"
+    width="600"
+  />
+</div>
+
+1. **Start**: Synchronous logs push/pop on the stack.
+2. **Promise.then**: Queued in microtask queue, drained before any macrotask.
+3. **setTimeout**: Queued in macrotask queue, executed after microtasks.
+
+# Common Pitfalls
+
+- **Long-running tasks** block the event loop, freezing the UI.
+- **Excessive microtasks** starvation can delay macrotasks.
+- **setTimeout(fn, 0)** is not “immediate”; it’s scheduled as a macrotask.
+
+# Best Practices
+
+- Use **microtasks** (`Promise`, `queueMicrotask`) for short, high-priority callbacks.
+- Use **macrotasks** (`setTimeout`, `setInterval`) for tasks that can be deferred.
+- Avoid heavy computation on the main thread; leverage **Web Workers** or **offload** to a server.
+
+# Conclusion
+
+The JavaScript Event Loop is the heart of asynchronous behavior in JS. Understanding its mechanics empowers you to write efficient, non-blocking code and debug tricky timing issues.
+
+Happy looping! 🔄🚀
